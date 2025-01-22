@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}About{% endblock %}
+{% block content %}
+<section class="py-10">
+    <div class="container mx-auto text-center">
+        <h1 class="text-4xl font-bold mb-6">About JobMate</h1>
+        <p class="text-xl mb-6">JobMate is a platform dedicated to connecting job seekers with employers seamlessly. Our mission is to make the job search and hiring process as efficient and effective as possible.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-4">Our Mission</h2>
+                <p>At JobMate, we strive to bridge the gap between job seekers and employers by providing a user-friendly platform that facilitates easy communication and efficient job matching.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-4">Our Vision</h2>
+                <p>We envision a world where finding the right job or the right candidate is a seamless experience, empowering individuals and businesses to achieve their goals.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-10 bg-light-gray">
+    <div class="container mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-6">Our Values</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <i class="fas fa-users text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">Community</h3>
+                <p>We believe in building a strong community where job seekers and employers can connect and grow together.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <i class="fas fa-lightbulb text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">Innovation</h3>
+                <p>We are committed to continuously improving our platform to provide the best possible experience for our users.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <i class="fas fa-shield-alt text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">Integrity</h3>
+                <p>We prioritize honesty and transparency in all our interactions, ensuring a trustworthy environment for everyone.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-10">
+    <div class="container mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-6">Meet Our Team</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <img src="{% static 'images/team1.jpg' %}" alt="Team Member 1" class="w-32 h-32 rounded-full mx-auto mb-4">
+                <h3 class="text-xl font-bold mb-2">John Doe</h3>
+                <p>CEO & Founder</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <img src="{% static 'images/team2.jpg' %}" alt="Team Member 2" class="w-32 h-32 rounded-full mx-auto mb-4">
+                <h3 class="text-xl font-bold mb-2">Jane Smith</h3>
+                <p>Chief Operating Officer</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <img src="{% static 'images/team3.jpg' %}" alt="Team Member 3" class="w-32 h-32 rounded-full mx-auto mb-4">
+                <h3 class="text-xl font-bold mb-2">Mike Johnson</h3>
+                <p>Chief Technology Officer</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
