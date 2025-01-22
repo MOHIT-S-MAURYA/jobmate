@@ -1,4 +1,5 @@
-from django.urls import path,include
+#contractor/urls.py
+from django.urls import path
 from . import views
 
 urlpatterns = [

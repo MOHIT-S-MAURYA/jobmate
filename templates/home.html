@@ -1,23 +1,83 @@
 {% extends "base.html" %}
-{% block body%}
-<body class="bg-gray-100">
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero-section bg-blue-600 text-white text-center py-20">
+    <div class="container mx-auto">
+        <h1 class="text-4xl font-bold mb-4">Welcome to JobMate</h1>
+        <p class="text-xl mb-6">Connecting job seekers with employers seamlessly.</p>
+        <a href="{% url 'contractor-home' %}" class="btn-primary px-4 py-2 rounded">List Job</a>
+        <a href="{% url 'worker-home' %}" class="btn-secondary px-4 py-2 rounded ml-4">Get Job</a>
+    </div>
+</section>
 
-    <main class="container mx-auto mt-10">
-        <div class="flex justify-center space-x-10">
-            <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                <i class="fas fa-briefcase text-6xl text-blue-600 mb-4"></i>
-                <h2 class="text-2xl font-bold mb-4">List Job</h2>
-                <p class="mb-4">Post a job and find the right worker for your needs.</p>
-                <a href="{% url 'contractor-home' %}" class="bg-blue-600 text-white px-4 py-2 rounded">List Job</a>
+<section class="py-10 bg-light-gray">
+    <div class="container mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-6">How It Works</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <i class="fas fa-briefcase text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">For Employers</h3>
+                <p>Post jobs and find the right candidates quickly and efficiently.</p>
             </div>
-            <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                <i class="fas fa-search text-6xl text-blue-600 mb-4"></i>
-                <h2 class="text-2xl font-bold mb-4">Get/Search Job</h2>
-                <p class="mb-4">Search for available jobs and apply for the one that suits you.</p>
-                <a href="{% url 'worker-home' %}" class="bg-blue-600 text-white px-4 py-2 rounded">Get Job</a>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <i class="fas fa-search text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">For Job Seekers</h3>
+                <p>Search for jobs that match your skills and apply with ease.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <i class="fas fa-comments text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">Connect</h3>
+                <p>Communicate directly with employers and job seekers for seamless coordination.</p>
             </div>
         </div>
-    </main>
-</body>
+    </div>
+</section>
 
-{% endblock body%}
+<section class="py-10">
+    <div class="container mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-6">Why Choose JobMate?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <i class="fas fa-check-circle text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">Trusted Platform</h3>
+                <p>We are trusted by thousands of employers and job seekers worldwide.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <i class="fas fa-user-friends text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">User-Friendly</h3>
+                <p>Our platform is easy to use, ensuring a smooth experience for everyone.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <i class="fas fa-shield-alt text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">Secure</h3>
+                <p>Your data is safe with us. We prioritize your privacy and security.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-10 bg-light-gray">
+    <div class="container mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-6">Testimonials</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <p class="mb-4">"JobMate helped me find the perfect job in no time. The platform is easy to use and very efficient."</p>
+                <p class="font-bold">- John Doe</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <p class="mb-4">"As an employer, I found JobMate to be an invaluable tool for finding qualified candidates quickly."</p>
+                <p class="font-bold">- Jane Smith</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-10">
+    <div class="container mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-6">Get Started Today</h2>
+        <p class="text-xl mb-6">Join JobMate and take the next step in your career or find the perfect candidate for your job.</p>
+        {% comment %} <a href="{% url 'signup' %}" class="btn-primary px-4 py-2 rounded">Sign Up</a>
+        <a href="{% url 'login' %}" class="btn-secondary px-4 py-2 rounded ml-4">Login</a> {% endcomment %}
+    </div>
+</section>
+{% endblock %}
