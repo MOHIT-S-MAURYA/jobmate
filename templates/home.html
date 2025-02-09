@@ -72,12 +72,15 @@
     </div>
 </section>
 
+{% if not user.is_authenticated %}
 <section class="py-10">
     <div class="container mx-auto text-center">
         <h2 class="text-3xl font-bold mb-6">Get Started Today</h2>
-        <p class="text-xl mb-6">Join JobMate and take the next step in your career or find the perfect candidate for your job.</p>
-        {% comment %} <a href="{% url 'signup' %}" class="btn-primary px-4 py-2 rounded">Sign Up</a>
-        <a href="{% url 'login' %}" class="btn-secondary px-4 py-2 rounded ml-4">Login</a> {% endcomment %}
+        <a href="{% url 'signup' %}" class="btn-primary px-4 py-2 rounded">Sign Up</a>
+        <a href="{% url 'login' %}" class="btn-secondary px-4 py-2 rounded ml-4">Login</a>
     </div>
 </section>
+{% endif %}
+
+
 {% endblock %}

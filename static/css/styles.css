@@ -36,3 +36,18 @@ main {
 .btn-secondary:hover {
     background-color: #e76f51;
 }
+.message {
+    display: block;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    background-color: #007bff;
+    color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.message.success {
+    background-color: #28a745;
+}
+.message.error {
+    background-color: #dc3545;
+}

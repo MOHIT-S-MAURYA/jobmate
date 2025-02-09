@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Worker Profile{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto mt-8">
+    <!-- Profile Header -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Left Sidebar (Profile Info) -->
+        <div class="bg-white shadow rounded-lg p-6 border">
+            <div class="text-center">
+                <img src="{% static 'images/profile_picture.jpg' %}" alt="Profile Picture" class="w-48 h-48 rounded-full mx-auto shadow-lg">
+                <h2 class="text-2xl font-bold mt-4">{{ user.first_name }} {{ user.last_name }}</h2>
+                <p class="text-gray-500">{{ user.profile.location }}</p>
+                <p class="text-gray-500">{{ user.email }}</p>
+                <p class="text-gray-500">{{ user.profile.phone_number }}</p>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="space-y-3">
+                <h3 class="text-lg font-semibold text-gray-700">Professional Details</h3>
+                <p class="text-gray-700"><strong>Skills & Expertise:</strong> {{ user.profile.skills }}</p>
+                <p class="text-gray-700"><strong>Years of Experience:</strong> {{ user.profile.years_of_experience }} years</p>
+                <p class="text-gray-700"><strong>Certifications & Training:</strong> {{ user.profile.certifications }}</p>
+                <p class="text-gray-700"><strong>Languages Spoken:</strong> {{ user.profile.languages }}</p>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="space-y-3">
+                <h3 class="text-lg font-semibold text-gray-700">Verification & Credentials</h3>
+                <p class="text-gray-700"><strong>Government ID Verification:</strong> ✅ {{ user.profile.gov_id_verification }}</p>
+                <p class="text-gray-700"><strong>References from Previous Contractors:</strong> ✅ {{ user.profile.references }}</p>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="text-center">
+                <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">Edit Profile</a>
+            </div>
+        </div>
+
+        <!-- Right Content Area -->
+        <div class="col-span-2">
+            <!-- Tabs Navigation -->
+            <div class="flex space-x-6 border-b pb-2 text-gray-600 font-medium">
+                <a href="#" class="py-2 border-b-2 border-blue-500 text-blue-600">Overview</a>
+                <a href="" class="py-2 hover:text-blue-600">Work History</a>
+                <a href="#" class="py-2 hover:text-blue-600">Transactions</a>
+                <a href="#" class="py-2 hover:text-blue-600">Settings</a>
+            </div>
+
+            <!-- Overview Section -->
+            <div class="bg-white shadow rounded-lg p-6 border mt-4">
+                <h3 class="text-xl font-semibold text-gray-700">About</h3>
+                <p class="text-gray-600">{{ user.profile.bio }}</p>
+            </div>
+
+            <!-- Work History Section -->
+            <div class="bg-white shadow rounded-lg p-6 border mt-6">
+                <h3 class="text-xl font-semibold text-gray-700">Work Experience & Job History</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                        <h4 class="font-semibold text-gray-800">Ongoing Jobs</h4>
+                        <p class="text-gray-600">{{ user.profile.ongoing_jobs }}</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                        <h4 class="font-semibold text-gray-800">Completed Jobs</h4>
+                        <p class="text-gray-600">{{ user.profile.completed_jobs }}</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                        <h4 class="font-semibold text-gray-800">Ratings & Reviews</h4>
+                        <p class="text-gray-600">⭐ {{ user.profile.reviews_ratings }}</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                        <h4 class="font-semibold text-gray-800">Total Earnings</h4>
+                        <p class="text-gray-600">{{ user.profile.total_earnings }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-right">
+                    <a href="" class="text-blue-600 hover:underline font-medium">See All Work History →</a>
+                </div>
+            </div>
+
+            <!-- Payment & Transactions -->
+            <div class="bg-white shadow rounded-lg p-6 border mt-6">
+                <h3 class="text-xl font-semibold text-gray-700">Payment & Transactions</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                        <h4 class="font-semibold text-gray-800">Preferred Payment Methods</h4>
+                        <p class="text-gray-600">{{ user.profile.payment_methods }}</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                        <h4 class="font-semibold text-gray-800">Transaction History</h4>
+                        <p class="text-gray-600">{{ user.profile.transaction_history }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Availability & Preferences -->
+            <div class="bg-white shadow rounded-lg p-6 border mt-6">
+                <h3 class="text-xl font-semibold text-gray-700">Availability & Preferences</h3>
+                <p class="text-gray-600"><strong>Available Work Hours:</strong> {{ user.profile.available_hours }}</p>
+                <p class="text-gray-600"><strong>Preferred Job Types:</strong> {{ user.profile.preferred_job_types }}</p>
+                <p class="text-gray-600"><strong>Willing to Travel:</strong> {{ user.profile.willing_to_travel }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
