@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Find Jobs{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto mt-8">
+    <!-- Search and Filter Section -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="search">
+                    Search Jobs
+                </label>
+                <input type="text" name="search" id="search" 
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Search by title or skills">
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="location">
+                    Location
+                </label>
+                <input type="text" name="location" id="location" 
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Enter location">
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="wage">
+                    Minimum Wage
+                </label>
+                <input type="number" name="min_wage" id="wage" 
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Enter minimum wage">
+            </div>
+            <div class="flex items-end">
+                <button type="submit" 
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Jobs List -->
+    <div class="grid grid-cols-1 gap-6">
+        {% for job in jobs %}
+        <div class="bg-white p-6 rounded-lg shadow-lg border hover:shadow-xl transition-shadow">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">{{ job.title }}</h2>
+                    <p class="text-gray-600">Posted by: {{ job.contractor.user.first_name }} {{ job.contractor.user.last_name }}</p>
+                    <p class="text-gray-600">{{ job.location }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-lg font-bold text-blue-600">₹{{ job.wage }}/day</p>
+                    <p class="text-sm text-gray-500">Posted: {{ job.created_at|timesince }} ago</p>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <p class="text-gray-700">{{ job.description }}</p>
+            </div>
+
+            <div class="mt-4">
+                <h3 class="font-semibold text-gray-700">Required Skills:</h3>
+                <p class="text-gray-600">{{ job.required_skills }}</p>
+            </div>
+
+            <div class="mt-6 flex justify-between items-center">
+                <div class="flex space-x-4">
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                        {{ job.get_status_display }}
+                    </span>
+                </div>
+                {% if job.status == 'open' %}
+                <form method="post" action="{% url 'apply-job' job.id %}">
+                    {% csrf_token %}
+                    <button type="submit" 
+                        class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                        Apply Now
+                    </button>
+                </form>
+                {% else %}
+                <button disabled class="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed">
+                    Closed
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-8">
+            <p class="text-gray-600">No jobs found matching your criteria.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

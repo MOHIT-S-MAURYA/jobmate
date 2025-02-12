@@ -5,7 +5,8 @@
     <div class="container mx-auto">
         <h1 class="text-4xl font-bold mb-4">Welcome to ContractorConnect</h1>
         <p class="text-xl mb-6">Connect with skilled workers and manage your projects seamlessly.</p>
-        <a href="#" class="btn-primary px-4 py-2 rounded">Post a Job</a>
+        <!-- Change this line in contractor_home.html -->
+<a href="{% url 'create-job' %}" class="btn-primary px-4 py-2 rounded">Post a Job</a>
         <a href="#" class="btn-secondary px-4 py-2 rounded ml-4">Find Workers</a>
     </div>
 </section>

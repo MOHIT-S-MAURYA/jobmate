@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Manage Skills{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto mt-8 mb-8">
+    <div class="bg-white shadow rounded-lg p-6 border">
+        <h2 class="text-2xl font-bold mb-6 text-center">Manage Your Skills</h2>
+        
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            {% regroup all_skills by category as skill_categories %}
+            
+            {% for category in skill_categories %}
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-3">
+                    {{ category.grouper|default:"Other Skills" }}
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    {% for skill in category.list %}
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" 
+                               name="skills" 
+                               value="{{ skill.id }}"
+                               id="skill_{{ skill.id }}"
+                               {% if skill in user.worker.skills.all %}checked{% endif %}
+                               class="form-checkbox h-5 w-5 text-blue-600">
+                        <label for="skill_{{ skill.id }}" class="text-gray-700">
+                            {{ skill.name }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="flex justify-center space-x-4">
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                    Save Skills
+                </button>
+                <a href="{% url 'worker-profile' %}" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

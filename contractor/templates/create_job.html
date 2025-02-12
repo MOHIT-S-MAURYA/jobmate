@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Create New Job{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto mt-8">
+    <div class="bg-white shadow rounded-lg p-6 border">
+        <h2 class="text-2xl font-bold mb-6 text-center">Create New Job</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label for="{{ form.title.id_for_label }}" class="block text-gray-700 font-medium mb-2">Job Title</label>
+                {{ form.title }}
+            </div>
+
+            <div class="mb-4">
+                <label for="{{ form.description.id_for_label }}" class="block text-gray-700 font-medium mb-2">Job Description</label>
+                {{ form.description }}
+            </div>
+
+            <div class="mb-4">
+                <label for="{{ form.location.id_for_label }}" class="block text-gray-700 font-medium mb-2">Location</label>
+                {{ form.location }}
+            </div>
+
+            <div class="mb-4">
+                <label for="{{ form.wage.id_for_label }}" class="block text-gray-700 font-medium mb-2">Wage (per day)</label>
+                {{ form.wage }}
+            </div>
+
+            <div class="mb-6">
+                <label for="{{ form.required_skills.id_for_label }}" class="block text-gray-700 font-medium mb-2">Required Skills</label>
+                {{ form.required_skills }}
+                <p class="text-sm text-gray-500 mt-1">Enter skills separated by commas</p>
+            </div>
+
+            <div class="flex justify-center space-x-4">
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                    Post Job
+                </button>
+                <a href="{% url 'contractor-profile' %}" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
