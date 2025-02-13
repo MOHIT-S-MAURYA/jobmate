@@ -5,6 +5,7 @@ class Contractor(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     company_name = models.CharField(max_length=255, blank=True, null=True)
     rating_avg = models.FloatField(default=0)
+    about = models.TextField(blank=True, null=True)
 
 class Job(models.Model):
     STATUS_CHOICES = (
@@ -33,3 +34,11 @@ class Application(models.Model):
 
     class Meta:
         unique_together = ('worker', 'job')
+
+class WorkRequest(models.Model):
+    contractor = models.ForeignKey(Contractor, on_delete=models.CASCADE)
+    worker = models.ForeignKey('worker.Worker', on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    message = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=10, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')], default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)

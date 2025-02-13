@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto mt-8">
+    <div class="bg-white shadow rounded-lg p-6 border">
+        <h2 class="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Personal Information -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-semibold border-b pb-2">Personal Information</h3>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">First Name</label>
+                        {{ user_form.first_name }}
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Last Name</label>
+                        {{ user_form.last_name }}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Email</label>
+                    {{ user_form.email }}
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Phone</label>
+                    {{ user_form.phone }}
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Date of Birth</label>
+                    {{ user_form.date_of_birth }}
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Address</label>
+                    {{ user_form.address }}
+                </div>
+            </div>
+
+            <!-- Contractor Specific Information -->
+            <div class="space-y-4 mt-6">
+                <h3 class="text-xl font-semibold border-b pb-2">Company Information</h3>
+                
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Company Name</label>
+                    {{ contractor_form.company_name }}
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">About</label>
+                    {{ contractor_form.about }}
+                </div>
+            </div>
+
+            <div class="flex justify-center space-x-4 mt-6">
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                    Save Changes
+                </button>
+                <a href="{% url 'contractor-profile' %}" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

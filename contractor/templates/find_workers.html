@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}Find Workers{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto mt-8">
+    <!-- Search and Filter Section -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="search">
+                    Search Workers
+                </label>
+                <input type="text" name="search" id="search" 
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Search by name or email" value="{{ current_filters.search }}">
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="location">
+                    Location
+                </label>
+                <input type="text" name="location" id="location" 
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Enter location" value="{{ current_filters.location }}">
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="min_experience">
+                    Minimum Experience
+                </label>
+                <input type="number" name="min_experience" id="min_experience" 
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Enter minimum experience" value="{{ current_filters.min_experience }}">
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="skill">
+                    Skill
+                </label>
+                <select name="skill" id="skill" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    <option value="">All Skills</option>
+                    {% for skill in all_skills %}
+                        <option value="{{ skill.name }}" {% if current_filters.skill == skill.name %}selected{% endif %}>{{ skill.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button type="submit" 
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Workers List -->
+    <div class="grid grid-cols-1 gap-6">
+        {% for worker in workers %}
+        <div class="bg-white p-6 rounded-lg shadow-lg border hover:shadow-xl transition-shadow">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">{{ worker.user.first_name }} {{ worker.user.last_name }}</h2>
+                    <p class="text-gray-600">{{ worker.location }}</p>
+                    <p class="text-gray-600">{{ worker.user.email }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-lg font-bold text-blue-600">{{ worker.experience }} years</p>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <h3 class="font-semibold text-gray-700">Skills:</h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for skill in worker.skills.all %}
+                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                            {{ skill.name }}
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Send Work Request Button -->
+            <div class="mt-4 text-right">
+                <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600" onclick="openWorkRequestModal({{ worker.user.id }})">
+                    Send Work Request
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-8">
+            <p class="text-gray-600">No workers found matching your criteria.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if workers.has_other_pages %}
+    <div class="mt-6 flex justify-center">
+        <div class="flex space-x-2">
+            {% if workers.has_previous %}
+            <a href="?page={{ workers.previous_page_number }}" class="px-3 py-1 bg-gray-100 rounded-lg">Previous</a>
+            {% endif %}
+            
+            {% for num in workers.paginator.page_range %}
+            <a href="?page={{ num }}" class="px-3 py-1 {% if workers.number == num %}bg-blue-600 text-white{% else %}bg-gray-100{% endif %} rounded-lg">
+                {{ num }}
+            </a>
+            {% endfor %}
+            
+            {% if workers.has_next %}
+            <a href="?page={{ workers.next_page_number }}" class="px-3 py-1 bg-gray-100 rounded-lg">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Work Request Modal -->
+<div id="workRequestModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
+        <h2 class="text-2xl font-bold mb-4">Send Work Request</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="job" class="block text-gray-700 font-medium mb-2">Select Job</label>
+                <select name="job" id="job" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    {% for job in available_jobs %}
+                        <option value="{{ job.id }}">{{ job.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {{ work_request_form.message }}
+            <input type="hidden" name="worker_id" id="worker_id">
+            <div class="flex justify-end space-x-4 mt-4">
+                <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600" onclick="closeWorkRequestModal()">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                    Send Request
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openWorkRequestModal(workerId) {
+    document.getElementById('worker_id').value = workerId;
+    document.getElementById('workRequestModal').classList.remove('hidden');
+}
+
+function closeWorkRequestModal() {
+    document.getElementById('workRequestModal').classList.add('hidden');
+}
+</script>
+{% endblock %}

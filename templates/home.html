@@ -5,8 +5,13 @@
     <div class="container mx-auto">
         <h1 class="text-4xl font-bold mb-4">Welcome to JobMate</h1>
         <p class="text-xl mb-6">Connecting job seekers with employers seamlessly.</p>
-        <a href="{% url 'contractor-home' %}" class="btn-primary px-4 py-2 rounded">List Job</a>
-        <a href="{% url 'worker-home' %}" class="btn-secondary px-4 py-2 rounded ml-4">Get Job</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'contractor-home' %}" class="btn-primary px-4 py-2 rounded">List Job</a>
+            <a href="{% url 'worker-home' %}" class="btn-secondary px-4 py-2 rounded ml-4">Get Job</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn-primary px-4 py-2 rounded">List Job</a>
+            <a href="{% url 'login' %}" class="btn-secondary px-4 py-2 rounded ml-4">Get Job</a>
+        {% endif %}
     </div>
 </section>
 
@@ -81,6 +86,5 @@
     </div>
 </section>
 {% endif %}
-
 
 {% endblock %}

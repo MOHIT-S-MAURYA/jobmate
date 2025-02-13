@@ -24,7 +24,7 @@
             <hr class="my-4">
 
             <div class="text-center">
-                <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">Edit Profile</a>
+                <a href="{% url 'edit-profile' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">Edit Profile</a>
             </div>
         </div>
 
@@ -32,35 +32,153 @@
         <div class="col-span-2">
             <!-- Tabs Navigation -->
             <div class="flex space-x-6 border-b pb-2 text-gray-600 font-medium">
-                <a href="{% url 'contractor-profile' %}" class="py-2 {% if request.resolver_match.url_name == 'contractor-profile' %}border-b-2 border-blue-500 text-blue-600{% endif %}">Overview</a>
-                <a href="{% url 'work-history' %}" class="py-2 {% if request.resolver_match.url_name == 'work-history' %}border-b-2 border-blue-500 text-blue-600{% endif %}">Work History</a>
-                <a href="{% url 'contractor-applications' %}" class="py-2 {% if request.resolver_match.url_name == 'contractor-applications' %}border-b-2 border-blue-500 text-blue-600{% endif %}">Applications</a>
-                <a href="#" class="py-2 hover:text-blue-600">Settings</a>
+                <a href="#overview" class="py-2 tab-link border-b-2 border-transparent hover:border-blue-500" onclick="openTab(event, 'overview')">Overview</a>
+                <a href="#applications" class="py-2 tab-link border-b-2 border-transparent hover:border-blue-500" onclick="openTab(event, 'applications')">Applications</a>
+                <a href="#work-history" class="py-2 tab-link border-b-2 border-transparent hover:border-blue-500" onclick="openTab(event, 'work-history')">Work History</a>
             </div>
 
             <!-- Overview Section -->
-            <div class="bg-white shadow rounded-lg p-6 border mt-4">
+            <div id="overview" class="tab-content bg-white shadow rounded-lg p-6 border mt-4">
                 <h3 class="text-xl font-semibold text-gray-700">About</h3>
-                <p class="text-gray-600">{{ user.profile.bio }}</p>
+                <p class="text-gray-600">{{ user.contractor.about }}</p>
+
+                <div class="bg-white shadow rounded-lg p-6 border mt-6">
+                    <h3 class="text-xl font-semibold text-gray-700">Job Listings & Work History</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-gray-800">Active Jobs</h4>
+                            <p class="text-gray-600">{{ active_jobs_count }}</p>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-gray-800">Completed Projects</h4>
+                            <p class="text-gray-600">{{ completed_projects_count }}</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-right">
+                        <a href="{% url 'work-history'%}" class="text-blue-600 hover:underline font-medium">See All Work History →</a>
+                    </div>
+                </div>
+
+                <div class="bg-white shadow rounded-lg p-6 border mt-6">
+                    <h3 class="text-xl font-semibold text-gray-700">Recent Applications</h3>
+                    <div class="mt-4 space-y-4">
+                        {% for application in recent_applications %}
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-semibold">{{ application.job.title }}</h4>
+                                    <p class="text-sm text-gray-600">Applied by: {{ application.worker.user.get_full_name }}</p>
+                                    <p class="text-sm text-gray-600">Applied on: {{ application.applied_at|date:"F j, Y" }}</p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-sm
+                                    {% if application.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                    {% elif application.status == 'accepted' %}bg-green-100 text-green-800
+                                    {% else %}bg-red-100 text-red-800{% endif %}">
+                                    {{ application.get_status_display }}
+                                </span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-gray-600">No recent applications.</p>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-4 text-right">
+                        <a href="{% url 'contractor-applications' %}" class="text-blue-600 hover:underline font-medium">See All Applications →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applications Section -->
+            <div id="applications" class="tab-content bg-white shadow rounded-lg p-6 border mt-4 hidden">
+                <h3 class="text-xl font-semibold text-gray-700">Applications</h3>
+                <div class="mt-4 space-y-4">
+                    {% for application in recent_applications %}
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-semibold">{{ application.job.title }}</h4>
+                                <p class="text-sm text-gray-600">Applied by: {{ application.worker.user.get_full_name }}</p>
+                                <p class="text-sm text-gray-600">Applied on: {{ application.applied_at|date:"F j, Y" }}</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-sm
+                                {% if application.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                {% elif application.status == 'accepted' %}bg-green-100 text-green-800
+                                {% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ application.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-600">No applications found.</p>
+                    {% endfor %}
+                </div>
             </div>
 
             <!-- Work History Section -->
-            <div class="bg-white shadow rounded-lg p-6 border mt-6">
-                <h3 class="text-xl font-semibold text-gray-700">Job Listings & Work History</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
-                        <h4 class="font-semibold text-gray-800">Active Jobs</h4>
-                        <p class="text-gray-600">{{ user.profile.active_job_listings }}</p>
+            <div id="work-history" class="tab-content bg-white shadow rounded-lg p-6 border mt-4 hidden">
+                <h3 class="text-xl font-semibold text-gray-700">Jobs Posted</h3>
+                <div class="mt-4 space-y-4">
+                    {% for job in jobs %}
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-semibold">{{ job.title }}</h4>
+                                <p class="text-sm text-gray-600">Location: {{ job.location }}</p>
+                                <p class="text-sm text-gray-600">Wage: ₹{{ job.wage }}/day</p>
+                                <p class="text-sm text-gray-600">Posted: {{ job.created_at|date:"F j, Y" }}</p>
+                                <p class="text-sm text-gray-600">Status: 
+                                    <span class="px-3 py-1 rounded-full text-sm
+                                        {% if job.status == 'open' %}bg-green-100 text-green-800
+                                        {% else %}bg-red-100 text-red-800{% endif %}">
+                                        {{ job.get_status_display }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="text-right space-y-2">
+                                {% if job.status == 'open' %}
+                                <form method="post" action="{% url 'update-job-status' job.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                                        Mark as Complete
+                                    </button>
+                                </form>
+                                {% endif %}
+                                <form method="post" action="{% url 'delete-job' job.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
-                        <h4 class="font-semibold text-gray-800">Completed Projects</p>
-                    </div>
-                </div>
-                <div class="mt-4 text-right">
-                    <a href="" class="text-blue-600 hover:underline font-medium">See All Work History →</a>
+                    {% empty %}
+                    <p class="text-gray-600">No jobs posted yet.</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tab-link");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" border-blue-500", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " border-blue-500";
+}
+
+// Open the default tab
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.tab-link').click();
+});
+</script>
 {% endblock %}

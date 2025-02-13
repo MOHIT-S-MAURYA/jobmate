@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'dailywage_website.middleware.RoleBasedRedirectMiddleware',  # Add this line to give access to role based home page.
 ]
 
 ROOT_URLCONF = 'dailywage_website.urls'

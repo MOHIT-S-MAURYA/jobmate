@@ -10,4 +10,5 @@ urlpatterns = [
     path('jobs/', views.find_jobs, name='find-jobs'),
     path('jobs/apply/<int:job_id>/', views.apply_job, name='apply-job'),
     path('skills/manage/', views.manage_skills, name='manage-skills'),
+    path('work-requests/', views.manage_work_requests, name='manage-work-requests'),  # Add this line
 ]

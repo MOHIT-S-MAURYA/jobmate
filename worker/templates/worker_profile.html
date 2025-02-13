@@ -33,7 +33,7 @@
                         Manage Skills
                     </a>
                 </div>
-                <p class="text-gray-700"><strong>Skills:</strong></p>
+                {% comment %} <p class="text-gray-700"><strong>Skills:</strong></p> {% endcomment %}
                 <div class="flex flex-wrap gap-2">
                     {% for skill in user.worker.skills.all %}
                         <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
@@ -70,7 +70,8 @@
             <div class="flex space-x-6 border-b pb-2 text-gray-600 font-medium">
                 <a href="{% url 'worker-profile' %}" class="py-2 {% if request.resolver_match.url_name == 'worker-profile' %}border-b-2 border-blue-500 text-blue-600{% endif %}">Overview</a>
                 <a href="{% url 'worker-applications' %}" class="py-2 {% if request.resolver_match.url_name == 'worker-applications' %}border-b-2 border-blue-500 text-blue-600{% endif %}">Applications</a>
-                <a href="#" class="py-2 hover:text-blue-600">Settings</a>
+                <a href="{% url 'manage-work-requests' %}" class="py-2 {% if request.resolver_match.url_name == 'manage-work-requests' %}border-b-2 border-blue-500 text-blue-600{% endif %}">Work Requests</a>
+                {% comment %} <a href="#" class="py-2 hover:text-blue-600">Settings</a> {% endcomment %}
             </div>
 
             <!-- Applications Section -->

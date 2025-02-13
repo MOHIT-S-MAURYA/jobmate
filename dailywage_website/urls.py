@@ -2,6 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+# from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -9,5 +10,5 @@ urlpatterns = [
     path('about/', TemplateView.as_view(template_name='about.html'), name='about'),
     path('worker/', include('worker.urls')),
     path('contractor/', include('contractor.urls')),
-    path('accounts/',include('accounts.urls')),
+    path('accounts/', include('accounts.urls')),
 ]

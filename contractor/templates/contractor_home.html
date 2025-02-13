@@ -5,9 +5,8 @@
     <div class="container mx-auto">
         <h1 class="text-4xl font-bold mb-4">Welcome to ContractorConnect</h1>
         <p class="text-xl mb-6">Connect with skilled workers and manage your projects seamlessly.</p>
-        <!-- Change this line in contractor_home.html -->
-<a href="{% url 'create-job' %}" class="btn-primary px-4 py-2 rounded">Post a Job</a>
-        <a href="#" class="btn-secondary px-4 py-2 rounded ml-4">Find Workers</a>
+        <a href="{% url 'create-job' %}" class="btn-primary px-4 py-2 rounded">Post a Job</a>
+        <a href="{% url 'find-workers' %}" class="btn-secondary px-4 py-2 rounded ml-4">Find Workers</a>
     </div>
 </section>
 <section class="py-10 bg-light-gray">
@@ -18,11 +17,13 @@
                 <i class="fas fa-briefcase text-4xl text-blue-600 mb-4"></i>
                 <h3 class="text-xl font-bold mb-2">Post a Job</h3>
                 <p>Quickly create and publish job postings for workers.</p>
+                <a href="{% url 'create-job' %}" class="text-blue-600 hover:underline">Post a Job</a>
             </div>
             <div class="bg-white p-6 rounded-lg shadow-lg">
                 <i class="fas fa-users text-4xl text-blue-600 mb-4"></i>
-                <h3 class="text-xl font-bold mb-2">Manage Workers</h3>
-                <p>Track, manage, and evaluate your hired workers.</p>
+                <h3 class="text-xl font-bold mb-2">Find Workers</h3>
+                <p>Search for skilled workers to hire for your projects.</p>
+                <a href="{% url 'find-workers' %}" class="text-blue-600 hover:underline">Find Workers</a>
             </div>
             <div class="bg-white p-6 rounded-lg shadow-lg">
                 <i class="fas fa-comments text-4xl text-blue-600 mb-4"></i>

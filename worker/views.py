@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
-from contractor.models import Job, Application
+from contractor.models import Job, Application, WorkRequest
 from .models import Worker, Skill, WorkerSkill
 from .forms import WorkerSkillForm
 from datetime import datetime, timedelta
@@ -137,4 +137,37 @@ def applications(request):
     return render(request, 'worker_applications.html', {
         'applications': applications,
         'status': status_filter
+    })
+
+@login_required(login_url='/login/')
+def manage_work_requests(request):
+    worker = request.user.worker
+    
+    # Get all work requests for the worker
+    work_requests = WorkRequest.objects.filter(worker=worker, status='pending').order_by('-created_at')
+    
+    if request.method == 'POST':
+        work_request_id = request.POST.get('work_request_id')
+        action = request.POST.get('action')
+        
+        try:
+            work_request = WorkRequest.objects.get(id=work_request_id, worker=worker)
+            if action == 'accept':
+                work_request.status = 'accepted'
+                # Create an application for the accepted work request
+                Application.objects.create(
+                    worker=worker,
+                    job=work_request.job,
+                    status='accepted'
+                )
+                messages.success(request, 'Work request accepted successfully!')
+            elif action == 'reject':
+                work_request.status = 'rejected'
+                messages.success(request, 'Work request rejected successfully!')
+            work_request.save()
+        except WorkRequest.DoesNotExist:
+            messages.error(request, 'Work request not found or you do not have permission.')
+    
+    return render(request, 'manage_work_requests.html', {
+        'work_requests': work_requests
     })
