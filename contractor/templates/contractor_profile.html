@@ -34,7 +34,7 @@
             <div class="flex space-x-6 border-b pb-2 text-gray-600 font-medium">
                 <a href="#overview" class="py-2 tab-link border-b-2 border-transparent hover:border-blue-500" onclick="openTab(event, 'overview')">Overview</a>
                 <a href="#applications" class="py-2 tab-link border-b-2 border-transparent hover:border-blue-500" onclick="openTab(event, 'applications')">Applications</a>
-                <a href="#work-history" class="py-2 tab-link border-b-2 border-transparent hover:border-blue-500" onclick="openTab(event, 'work-history')">Work History</a>
+                <a href="#jobs" class="py-2 tab-link border-b-2 border-transparent hover:border-blue-500" onclick="openTab(event, 'jobs')">Jobs</a>
             </div>
 
             <!-- Overview Section -->
@@ -58,34 +58,6 @@
                         <a href="{% url 'work-history'%}" class="text-blue-600 hover:underline font-medium">See All Work History →</a>
                     </div>
                 </div>
-
-                <div class="bg-white shadow rounded-lg p-6 border mt-6">
-                    <h3 class="text-xl font-semibold text-gray-700">Recent Applications</h3>
-                    <div class="mt-4 space-y-4">
-                        {% for application in recent_applications %}
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="font-semibold">{{ application.job.title }}</h4>
-                                    <p class="text-sm text-gray-600">Applied by: {{ application.worker.user.get_full_name }}</p>
-                                    <p class="text-sm text-gray-600">Applied on: {{ application.applied_at|date:"F j, Y" }}</p>
-                                </div>
-                                <span class="px-3 py-1 rounded-full text-sm
-                                    {% if application.status == 'pending' %}bg-yellow-100 text-yellow-800
-                                    {% elif application.status == 'accepted' %}bg-green-100 text-green-800
-                                    {% else %}bg-red-100 text-red-800{% endif %}">
-                                    {{ application.get_status_display }}
-                                </span>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p class="text-gray-600">No recent applications.</p>
-                        {% endfor %}
-                    </div>
-                    <div class="mt-4 text-right">
-                        <a href="{% url 'contractor-applications' %}" class="text-blue-600 hover:underline font-medium">See All Applications →</a>
-                    </div>
-                </div>
             </div>
 
             <!-- Applications Section -->
@@ -98,6 +70,7 @@
                             <div>
                                 <h4 class="font-semibold">{{ application.job.title }}</h4>
                                 <p class="text-sm text-gray-600">Applied by: {{ application.worker.user.get_full_name }}</p>
+                                <p class="text-sm text-gray-600">Worker Phone: {{ application.worker.user.phone }}</p>
                                 <p class="text-sm text-gray-600">Applied on: {{ application.applied_at|date:"F j, Y" }}</p>
                             </div>
                             <span class="px-3 py-1 rounded-full text-sm
@@ -114,8 +87,8 @@
                 </div>
             </div>
 
-            <!-- Work History Section -->
-            <div id="work-history" class="tab-content bg-white shadow rounded-lg p-6 border mt-4 hidden">
+            <!-- Jobs Section -->
+            <div id="jobs" class="tab-content bg-white shadow rounded-lg p-6 border mt-4 hidden">
                 <h3 class="text-xl font-semibold text-gray-700">Jobs Posted</h3>
                 <div class="mt-4 space-y-4">
                     {% for job in jobs %}

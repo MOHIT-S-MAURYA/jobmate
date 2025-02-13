@@ -26,5 +26,5 @@ class WorkRequestForm(forms.ModelForm):
         contractor = kwargs.pop('contractor', None)
         super().__init__(*args, **kwargs)
         if contractor:
-            self.fields['job'].queryset = Job.objects.filter(contractor=contractor)
+            self.fields['job'].queryset = Job.objects.filter(contractor=contractor, status='open')
             self.fields['job'].label_from_instance = lambda obj: obj.title

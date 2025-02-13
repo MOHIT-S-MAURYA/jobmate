@@ -16,13 +16,12 @@ def home(request):
 
 @login_required(login_url='/login/')
 def profile_worker(request):
-    # Get only the 3 most recent applications for the overview
-    recent_applications = Application.objects.filter(
-        worker=request.user.worker
-    ).order_by('-applied_at')[:3]
+    worker = request.user.worker
+    
+    recent_applications = Application.objects.filter(worker=worker).order_by('-applied_at')[:3]
     
     return render(request, 'worker_profile.html', {
-        'recent_applications': recent_applications
+        'recent_applications': recent_applications,
     })
 
 @login_required(login_url='/login/')

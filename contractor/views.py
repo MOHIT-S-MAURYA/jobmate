@@ -1,15 +1,14 @@
 #contractor/views.py
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 from .forms import JobCreationForm, WorkRequestForm
 from dailywage_website.forms import CustomUserUpdateForm, ContractorProfileForm  # Correct import
-from .models import Contractor, Application, Job
-from worker.models import Skill
+from .models import Contractor, Application, Job, WorkRequest
+from worker.models import Skill, Worker
 from django.db.models import Q
-from worker.models import Worker
 
 # Create your views here.
 
@@ -45,40 +44,53 @@ def create_job(request):
         form = JobCreationForm(request.POST)
         if form.is_valid():
             job = form.save(commit=False)
-            # Get or create contractor profile for the user
-            contractor, created = Contractor.objects.get_or_create(user=request.user)
-            job.contractor = contractor
+            job.contractor = request.user.contractor
             job.save()
-            messages.success(request, 'Job posted successfully!')
-            return redirect('contractor-profile')
+            messages.success(request, 'Job created successfully!')
+            return redirect('manage-jobs')
     else:
         form = JobCreationForm()
     return render(request, 'create_job.html', {'form': form})
 
 @login_required(login_url='/login/')
-def update_application_status(request, application_id):
+def edit_job(request, job_id):
+    job = get_object_or_404(Job, id=job_id, contractor=request.user.contractor)
     if request.method == 'POST':
-        try:
-            application = Application.objects.get(
-                id=application_id,
-                job__contractor__user=request.user
-            )
-            new_status = request.POST.get('status')
-            if new_status in ['accepted', 'rejected']:
-                application.status = new_status
-                application.save()
-                
-                # Send notification to worker
-                if new_status == 'accepted':
-                    messages.success(request, 'Application accepted! The worker has been notified.')
-                else:
-                    messages.info(request, 'Application rejected. The worker has been notified.')
-                    
-                return redirect('contractor-applications')
-                
-        except Application.DoesNotExist:
-            messages.error(request, 'Application not found or you do not have permission.')
-    return redirect('contractor-applications')
+        form = JobCreationForm(request.POST, instance=job)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Job updated successfully!')
+            return redirect('manage-jobs')
+    else:
+        form = JobCreationForm(instance=job)
+    return render(request, 'edit_job.html', {'form': form, 'job': job})
+
+@login_required(login_url='/login/')
+def delete_job(request, job_id):
+    job = get_object_or_404(Job, id=job_id, contractor=request.user.contractor)
+    job.delete()
+    messages.success(request, 'Job deleted successfully!')
+    return redirect('manage-jobs')
+
+@login_required(login_url='/login/')
+def update_job_status(request, job_id):
+    job = get_object_or_404(Job, id=job_id, contractor=request.user.contractor)
+    job.status = 'closed'
+    job.save()
+    messages.success(request, 'Job status updated to complete!')
+    return redirect('manage-jobs')
+
+@login_required(login_url='/login/')
+def update_application_status(request, application_id):
+    application = get_object_or_404(Application, id=application_id, job__contractor=request.user.contractor)
+    new_status = request.POST.get('status')
+    if new_status in ['accepted', 'rejected']:
+        application.status = new_status
+        application.save()
+        messages.success(request, f'Application {new_status} successfully!')
+    else:
+        messages.error(request, 'Invalid status update.')
+    return redirect('manage-applications')
 
 @login_required(login_url='/login/')
 def manage_applications(request):
@@ -86,25 +98,18 @@ def manage_applications(request):
     job_filter = request.GET.get('job')
     status_filter = request.GET.get('status')
     
-    # Get all applications for contractor's jobs
-    applications_list = Application.objects.filter(
-        job__contractor=contractor
-    )
+    applications_list = Application.objects.filter(job__contractor=contractor)
     
-    # Apply filters if specified
     if job_filter:
         applications_list = applications_list.filter(job_id=job_filter)
     if status_filter:
         applications_list = applications_list.filter(status=status_filter)
     
-    # Order by most recent first
     applications_list = applications_list.order_by('-applied_at')
     
-    # Get all jobs for filter dropdown
     jobs = contractor.job_set.all()
     
-    # Pagination
-    paginator = Paginator(applications_list, 10)  # Show 10 applications per page
+    paginator = Paginator(applications_list, 10)
     page = request.GET.get('page')
     applications = paginator.get_page(page)
     
@@ -240,7 +245,11 @@ def update_job_status(request, job_id):
         job = Job.objects.get(id=job_id, contractor=request.user.contractor)
         job.status = 'closed'
         job.save()
-        messages.success(request, 'Job status updated to complete!')
+        
+        # Update the status of related applications
+        Application.objects.filter(job=job, status='pending').update(status='rejected')
+        
+        messages.success(request, 'Job status updated to complete and related applications updated!')
     except Job.DoesNotExist:
         messages.error(request, 'Job not found or you do not have permission.')
     return redirect('manage-jobs')

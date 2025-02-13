@@ -58,6 +58,7 @@
                     <h2 class="text-xl font-bold text-gray-800">{{ worker.user.first_name }} {{ worker.user.last_name }}</h2>
                     <p class="text-gray-600">{{ worker.location }}</p>
                     <p class="text-gray-600">{{ worker.user.email }}</p>
+                    <p class="text-gray-600">{{ worker.user.phone }}</p>
                 </div>
                 <div class="text-right">
                     <p class="text-lg font-bold text-blue-600">{{ worker.experience }} years</p>
@@ -65,8 +66,8 @@
             </div>
             
             <div class="mt-4">
-                <h3 class="font-semibold text-gray-700">Skills:</h3>
-                <div class="flex flex-wrap gap-2">
+                <h3 class="text-lg font-semibold text-gray-700">Skills</h3>
+                <div class="flex flex-wrap gap-2 mt-2">
                     {% for skill in worker.skills.all %}
                         <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
                             {{ skill.name }}
@@ -75,16 +76,24 @@
                 </div>
             </div>
 
-            <!-- Send Work Request Button -->
             <div class="mt-4 text-right">
-                <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600" onclick="openWorkRequestModal({{ worker.user.id }})">
-                    Send Work Request
-                </button>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="worker_id" value="{{ worker.user.id }}">
+                    <select name="job" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 mb-2">
+                        <option value="">Select Job</option>
+                        {% for job in available_jobs %}
+                            <option value="{{ job.id }}">{{ job.title }}</option>
+                        {% endfor %}
+                    </select>
+                    <textarea name="message" rows="3" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 mb-2" placeholder="Enter message"></textarea>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Send Job Offer</button>
+                </form>
             </div>
         </div>
         {% empty %}
         <div class="text-center py-8">
-            <p class="text-gray-600">No workers found matching your criteria.</p>
+            <p class="text-gray-600">No workers found.</p>
         </div>
         {% endfor %}
     </div>
@@ -110,43 +119,4 @@
     </div>
     {% endif %}
 </div>
-
-<!-- Work Request Modal -->
-<div id="workRequestModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
-        <h2 class="text-2xl font-bold mb-4">Send Work Request</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div class="mb-4">
-                <label for="job" class="block text-gray-700 font-medium mb-2">Select Job</label>
-                <select name="job" id="job" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-                    {% for job in available_jobs %}
-                        <option value="{{ job.id }}">{{ job.title }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            {{ work_request_form.message }}
-            <input type="hidden" name="worker_id" id="worker_id">
-            <div class="flex justify-end space-x-4 mt-4">
-                <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600" onclick="closeWorkRequestModal()">
-                    Cancel
-                </button>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                    Send Request
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script>
-function openWorkRequestModal(workerId) {
-    document.getElementById('worker_id').value = workerId;
-    document.getElementById('workRequestModal').classList.remove('hidden');
-}
-
-function closeWorkRequestModal() {
-    document.getElementById('workRequestModal').classList.add('hidden');
-}
-</script>
 {% endblock %}
