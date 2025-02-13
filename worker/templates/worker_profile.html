@@ -68,17 +68,21 @@
         <div class="col-span-2">
             <!-- Tabs Navigation -->
             <div class="flex space-x-6 border-b pb-2 text-gray-600 font-medium">
-                <a href="#" class="py-2 border-b-2 border-blue-500 text-blue-600">Overview</a>
-                <a href="#" class="py-2 hover:text-blue-600">Applications</a>
-                <a href="#" class="py-2 hover:text-blue-600">Reviews</a>
+                <a href="{% url 'worker-profile' %}" class="py-2 {% if request.resolver_match.url_name == 'worker-profile' %}border-b-2 border-blue-500 text-blue-600{% endif %}">Overview</a>
+                <a href="{% url 'worker-applications' %}" class="py-2 {% if request.resolver_match.url_name == 'worker-applications' %}border-b-2 border-blue-500 text-blue-600{% endif %}">Applications</a>
                 <a href="#" class="py-2 hover:text-blue-600">Settings</a>
             </div>
 
             <!-- Applications Section -->
             <div class="bg-white shadow rounded-lg p-6 border mt-6">
-                <h3 class="text-xl font-semibold text-gray-700">Recent Job Applications</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-700">Recent Job Applications</h3>
+                    <a href="{% url 'worker-applications' %}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                        View All Applications →
+                    </a>
+                </div>
                 <div class="mt-4 space-y-4">
-                    {% for application in user.worker.application_set.all|slice:":5" %}
+                    {% for application in recent_applications %}
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <div class="flex justify-between items-start">
                             <div>
@@ -95,31 +99,6 @@
                     </div>
                     {% empty %}
                     <p class="text-gray-600">No applications yet.</p>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- Reviews Section -->
-            <div class="bg-white shadow rounded-lg p-6 border mt-6">
-                <h3 class="text-xl font-semibold text-gray-700">Reviews</h3>
-                <div class="mt-4 space-y-4">
-                    {% for review in user.reviews_received.all|slice:":5" %}
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <div class="flex items-center">
-                                    <p class="font-semibold">{{ review.reviewer.get_full_name }}</p>
-                                    <p class="ml-2 text-yellow-500">
-                                        {% for _ in ''|ljust:review.rating %}⭐{% endfor %}
-                                    </p>
-                                </div>
-                                <p class="text-gray-600 mt-2">{{ review.comment }}</p>
-                            </div>
-                            <p class="text-sm text-gray-500">{{ review.review_date|date }}</p>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <p class="text-gray-600">No reviews yet.</p>
                     {% endfor %}
                 </div>
             </div>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Review
+from .models import CustomUser
 
 class CustomUserAdmin(UserAdmin):
     # Modify the existing fieldsets
@@ -23,4 +23,3 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('username', 'first_name', 'last_name', 'email', 'role', 'phone')
 
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Review)

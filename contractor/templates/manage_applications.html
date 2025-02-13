@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Manage Applications{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto mt-8">
+    <div class="bg-white shadow rounded-lg p-6 border">
+        <!-- Filter Section -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">Manage Applications</h2>
+            <div class="flex gap-4">
+                <select id="jobFilter" class="px-3 py-2 border rounded-lg">
+                    <option value="">All Jobs</option>
+                    {% for job in jobs %}
+                        <option value="{{ job.id }}" {% if current_job == job.id|stringformat:"s" %}selected{% endif %}>{{ job.title }}</option>
+                    {% endfor %}
+                </select>
+                <select id="statusFilter" class="px-3 py-2 border rounded-lg">
+                    <option value="">All Status</option>
+                    <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="accepted" {% if current_status == 'accepted' %}selected{% endif %}>Accepted</option>
+                    <option value="rejected" {% if current_status == 'rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Applications List -->
+        <div class="space-y-4">
+            {% for application in applications %}
+            <div class="bg-gray-50 p-6 rounded-lg border">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xl font-semibold">{{ application.worker.user.get_full_name }}</h3>
+                        <div class="mt-2 space-y-1">
+                            <p class="text-gray-600">Applied for: {{ application.job.title }}</p>
+                            <p class="text-gray-600">Applied on: {{ application.applied_at|date:"F j, Y" }}</p>
+                            <p class="text-gray-600">Worker Location: {{ application.worker.location }}</p>
+                            <p class="text-gray-600">Experience: {{ application.worker.experience }} years</p>
+                        </div>
+                        
+                        <!-- Worker Skills -->
+                        <div class="mt-3">
+                            <p class="font-medium text-gray-700">Skills:</p>
+                            <div class="flex flex-wrap gap-2 mt-1">
+                                {% for skill in application.worker.skills.all %}
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                        {{ skill.name }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Status and Actions -->
+                    <div class="text-right">
+                        <div class="mb-4">
+                            <span class="px-4 py-2 rounded-full text-sm 
+                                {% if application.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                {% elif application.status == 'accepted' %}bg-green-100 text-green-800
+                                {% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ application.get_status_display }}
+                            </span>
+                        </div>
+                        
+                        {% if application.status == 'pending' %}
+                        <div class="space-y-2">
+                            <form method="post" action="{% url 'update-application' application.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="accepted">
+                                <button type="submit" class="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                                    Accept
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'update-application' application.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="rejected">
+                                <button type="submit" class="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                                    Reject
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8">
+                <p class="text-gray-600">No applications found.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if applications.has_other_pages %}
+        <div class="mt-6 flex justify-center">
+            <div class="flex space-x-2">
+                {% if applications.has_previous %}
+                <a href="?page={{ applications.previous_page_number }}" class="px-3 py-1 bg-gray-100 rounded-lg">Previous</a>
+                {% endif %}
+                
+                {% for num in applications.paginator.page_range %}
+                <a href="?page={{ num }}" class="px-3 py-1 {% if applications.number == num %}bg-blue-600 text-white{% else %}bg-gray-100{% endif %} rounded-lg">
+                    {{ num }}
+                </a>
+                {% endfor %}
+                
+                {% if applications.has_next %}
+                <a href="?page={{ applications.next_page_number }}" class="px-3 py-1 bg-gray-100 rounded-lg">Next</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const jobFilter = document.getElementById('jobFilter');
+    const statusFilter = document.getElementById('statusFilter');
+    
+    function applyFilters() {
+        const jobId = jobFilter.value;
+        const status = statusFilter.value;
+        let url = window.location.pathname + '?';
+        
+        if (jobId) url += `job=${jobId}&`;
+        if (status) url += `status=${status}&`;
+        
+        window.location.href = url;
+    }
+    
+    jobFilter.addEventListener('change', applyFilters);
+    statusFilter.addEventListener('change', applyFilters);
+});
+</script>
+{% endblock %}

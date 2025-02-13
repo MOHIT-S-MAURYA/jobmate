@@ -4,9 +4,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
+from django.core.paginator import Paginator
 from contractor.models import Job, Application
 from .models import Worker, Skill, WorkerSkill
 from .forms import WorkerSkillForm
+from datetime import datetime, timedelta
 
 # Create your views here.
 def home(request):
@@ -14,26 +16,59 @@ def home(request):
 
 @login_required(login_url='/login/')
 def profile_worker(request):
-    return render(request, 'worker_profile.html')
+    # Get only the 3 most recent applications for the overview
+    recent_applications = Application.objects.filter(
+        worker=request.user.worker
+    ).order_by('-applied_at')[:3]
+    
+    return render(request, 'worker_profile.html', {
+        'recent_applications': recent_applications
+    })
 
 @login_required(login_url='/login/')
 def find_jobs(request):
     query = Q(status='open')
     
-    # Search filters
+    # Enhanced search filters
     search = request.GET.get('search')
     location = request.GET.get('location')
     min_wage = request.GET.get('min_wage')
+    skill_filter = request.GET.get('skill')
+    date_posted = request.GET.get('date_posted')
     
     if search:
-        query &= Q(title__icontains=search) | Q(required_skills__icontains=search)
+        query &= Q(title__icontains=search) | Q(description__icontains=search) | Q(required_skills__icontains=search)
     if location:
         query &= Q(location__icontains=location)
     if min_wage:
         query &= Q(wage__gte=min_wage)
+    if skill_filter:
+        query &= Q(required_skills__icontains=skill_filter)
+    if date_posted:
+        if date_posted == 'today':
+            query &= Q(created_at__date=datetime.now().date())
+        elif date_posted == 'week':
+            query &= Q(created_at__gte=datetime.now() - timedelta(days=7))
+        elif date_posted == 'month':
+            query &= Q(created_at__gte=datetime.now() - timedelta(days=30))
+    
+    # Exclude jobs that have been accepted by a worker
+    accepted_jobs = Application.objects.filter(status='accepted').values_list('job_id', flat=True)
+    query &= ~Q(id__in=accepted_jobs)
     
     jobs = Job.objects.filter(query).order_by('-created_at')
-    return render(request, 'find_jobs.html', {'jobs': jobs})
+    paginator = Paginator(jobs, 10)
+    page = request.GET.get('page')
+    jobs = paginator.get_page(page)
+    
+    # Get all unique skills for filter dropdown
+    all_skills = Skill.objects.all()
+    
+    return render(request, 'find_jobs.html', {
+        'jobs': jobs,
+        'all_skills': all_skills,
+        'current_filters': request.GET
+    })
 
 @login_required(login_url='/login/')
 def apply_job(request, job_id):
@@ -78,4 +113,28 @@ def manage_skills(request):
     return render(request, 'manage_skills.html', {
         'form': form,
         'all_skills': Skill.objects.all().order_by('category', 'name')
+    })
+
+@login_required(login_url='/login/')
+def applications(request):
+    status_filter = request.GET.get('status', '')
+    
+    # Get all applications for the worker
+    applications_list = Application.objects.filter(worker=request.user.worker)
+    
+    # Apply status filter if specified
+    if status_filter:
+        applications_list = applications_list.filter(status=status_filter)
+    
+    # Order by most recent first
+    applications_list = applications_list.order_by('-applied_at')
+    
+    # Pagination
+    paginator = Paginator(applications_list, 10)  # Show 10 applications per page
+    page = request.GET.get('page')
+    applications = paginator.get_page(page)
+    
+    return render(request, 'worker_applications.html', {
+        'applications': applications,
+        'status': status_filter
     })

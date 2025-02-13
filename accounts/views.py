@@ -1,11 +1,11 @@
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from dailywage_website.forms import CustomUserUpdateForm, WorkerProfileForm, ContractorProfileForm
 from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
-from worker.models import Worker
-from contractor.models import Contractor
+from .models import CustomUser
+from django.db.models import Count, Avg
 
 def signup(request):
     if request.method == 'POST':
@@ -77,4 +77,3 @@ def profile_setup(request):
         'user_form': user_form,
         'profile_form': profile_form
     })
-

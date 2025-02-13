@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}My Applications{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto mt-8">
+    <div class="bg-white shadow rounded-lg p-6 border">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">My Job Applications</h2>
+            <a href="{% url 'find-jobs' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
+                Find More Jobs
+            </a>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="mb-6">
+            <form method="get" class="flex gap-4">
+                <select name="status" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    <option value="">All Status</option>
+                    <option value="pending" {% if status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="accepted" {% if status == 'accepted' %}selected{% endif %}>Accepted</option>
+                    <option value="rejected" {% if status == 'rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+                <button type="submit" class="bg-gray-100 px-4 py-2 rounded-lg hover:bg-gray-200">
+                    Filter
+                </button>
+            </form>
+        </div>
+
+        <!-- Applications List -->
+        <div class="space-y-4">
+            {% for application in applications %}
+            <div class="bg-gray-50 p-6 rounded-lg border">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800">{{ application.job.title }}</h3>
+                        <div class="mt-2 space-y-1">
+                            <p class="text-gray-600">
+                                <span class="font-medium">Company:</span> 
+                                {{ application.job.contractor.company_name }}
+                            </p>
+                            <p class="text-gray-600">
+                                <span class="font-medium">Location:</span> 
+                                {{ application.job.location }}
+                            </p>
+                            <p class="text-gray-600">
+                                <span class="font-medium">Wage:</span> 
+                                ₹{{ application.job.wage }}/day
+                            </p>
+                            <p class="text-gray-600">
+                                <span class="font-medium">Applied:</span> 
+                                {{ application.applied_at|date:"F j, Y" }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="px-4 py-2 rounded-full text-sm 
+                            {% if application.status == 'pending' %}bg-yellow-100 text-yellow-800
+                            {% elif application.status == 'accepted' %}bg-green-100 text-green-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ application.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8">
+                <p class="text-gray-600">No applications found.</p>
+                <a href="{% url 'find-jobs' %}" class="text-blue-600 hover:underline mt-2 inline-block">
+                    Browse Available Jobs →
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if applications.has_other_pages %}
+        <div class="mt-6 flex justify-center">
+            <div class="flex space-x-2">
+                {% if applications.has_previous %}
+                <a href="?page={{ applications.previous_page_number }}" class="px-3 py-1 bg-gray-100 rounded-lg">Previous</a>
+                {% endif %}
+                
+                {% for num in applications.paginator.page_range %}
+                <a href="?page={{ num }}" class="px-3 py-1 {% if applications.number == num %}bg-blue-600 text-white{% else %}bg-gray-100{% endif %} rounded-lg">
+                    {{ num }}
+                </a>
+                {% endfor %}
+                
+                {% if applications.has_next %}
+                <a href="?page={{ applications.next_page_number }}" class="px-3 py-1 bg-gray-100 rounded-lg">Next</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

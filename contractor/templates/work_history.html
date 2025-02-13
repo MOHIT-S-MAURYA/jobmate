@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Work History{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto mt-8">
+    <div class="bg-white shadow rounded-lg p-6 border">
+        <!-- Statistics Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-blue-800">Total Completed Jobs</h3>
+                <p class="text-3xl font-bold text-blue-600">{{ total_completed }}</p>
+            </div>
+            <div class="bg-green-50 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-green-800">Total Earnings</h3>
+                <p class="text-3xl font-bold text-green-600">₹{{ total_earnings }}</p>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-purple-800">Average Rating</h3>
+                <p class="text-3xl font-bold text-purple-600">{{ avg_rating|floatformat:1 }} ⭐</p>
+            </div>
+        </div>
+
+        <!-- Work History List -->
+        <h2 class="text-2xl font-bold mb-4">Completed Jobs</h2>
+        <div class="space-y-4">
+            {% for application in completed_jobs %}
+            <div class="bg-gray-50 p-6 rounded-lg border">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800">{{ application.job.title }}</h3>
+                        <div class="mt-2 space-y-1">
+                            <p class="text-gray-600">
+                                <span class="font-medium">Contractor:</span> 
+                                {{ application.job.contractor.user.get_full_name }}
+                            </p>
+                            <p class="text-gray-600">
+                                <span class="font-medium">Location:</span> 
+                                {{ application.job.location }}
+                            </p>
+                            <p class="text-gray-600">
+                                <span class="font-medium">Wage:</span> 
+                                ₹{{ application.job.wage }}/day
+                            </p>
+                            <p class="text-gray-600">
+                                <span class="font-medium">Completed:</span> 
+                                {{ application.applied_at|date:"F j, Y" }}
+                            </p>
+                            {% if application.job.required_skills %}
+                            <div class="mt-2">
+                                <p class="font-medium text-gray-700">Required Skills:</p>
+                                <div class="flex flex-wrap gap-2 mt-1">
+                                    {% for skill in application.job.required_skills.split %}
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                        {{ skill }}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8">
+                <p class="text-gray-600">No completed jobs yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if completed_jobs.has_other_pages %}
+        <div class="mt-6 flex justify-center">
+            <div class="flex space-x-2">
+                {% if completed_jobs.has_previous %}
+                <a href="?page={{ completed_jobs.previous_page_number }}" class="px-3 py-1 bg-gray-100 rounded-lg">Previous</a>
+                {% endif %}
+                
+                {% for num in completed_jobs.paginator.page_range %}
+                <a href="?page={{ num }}" class="px-3 py-1 {% if completed_jobs.number == num %}bg-blue-600 text-white{% else %}bg-gray-100{% endif %} rounded-lg">
+                    {{ num }}
+                </a>
+                {% endfor %}
+                
+                {% if completed_jobs.has_next %}
+                <a href="?page={{ completed_jobs.next_page_number }}" class="px-3 py-1 bg-gray-100 rounded-lg">Next</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
