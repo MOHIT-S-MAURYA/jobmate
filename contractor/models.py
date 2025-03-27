@@ -7,6 +7,9 @@ class Contractor(models.Model):
     rating_avg = models.FloatField(default=0)
     about = models.TextField(blank=True, null=True)
 
+    def __str__(self):
+        return self.user.username
+
 class Job(models.Model):
     STATUS_CHOICES = (
         ('open', 'Open'),
@@ -21,6 +24,9 @@ class Job(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
 
+    def __str__(self):
+        return self.contractor.user.username + ' - ' + self.title
+
 class Application(models.Model):
     STATUS_CHOICES = (
         ('pending', 'Pending'),
@@ -34,6 +40,9 @@ class Application(models.Model):
 
     class Meta:
         unique_together = ('worker', 'job')
+    
+    def __str__(self):
+        return self.worker.user.username + ' - ' + self.job.title
 
 class WorkRequest(models.Model):
     contractor = models.ForeignKey(Contractor, on_delete=models.CASCADE)
@@ -42,3 +51,6 @@ class WorkRequest(models.Model):
     message = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=10, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')], default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.contractor.user.username + ' - ' + self.worker.user.username + ' - ' + self.job.title
